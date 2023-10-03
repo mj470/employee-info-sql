@@ -1,25 +1,8 @@
 // required dependencies
 const inquirer = require("inquirer");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 require("console.table");
 const db = require('./db');
-
-// create connection to sql database
-const connection = mysql.createConnection({
-    host: "localhost",
-    port: 3306,
-    user: "root",
-    password: "password123",
-    database: "employee_trackerDB"
-});
-
-connection.connect(function(err) {
-    if (err) throw err;
-    console.log("connected as id " + connection.threadId);
-    console.log("Welcome to the Employee Tracker!");
-    init();
-});
-
 
 // function to initialize program
 function init() {
@@ -29,36 +12,32 @@ function init() {
             name: "choices",
             message: "What would you like to do?",
             choices: [
-                {choices: "view all departments", value: "ALL_DEPARTMENTS"},
-                {choices: "view all roles", value: "ALL_ROLES"},
-                {choices: "view all employees", value: "ALL_EMPLOYEES"},
-                {choices: "add a department", value: "ADD_DEPARTMENT"},
-                {choices: "add a role", value: "ADD_ROLE"},
-                {choices: "add an employee", value: "ADD_EMPLOYEE"},
-                {choices: "update an employee role", value: "UPDATE_EMPLOYEE_ROLE"},
+                {name: "view all departments", value: "ALL_DEPARTMENTS"},
+                {name: "view all roles", value: "ALL_ROLES"},
+                {name: "view all employees", value: "ALL_EMPLOYEES"},
+                {name: "add a department", value: "ADD_DEPARTMENT"},
+                {name: "add a role", value: "ADD_ROLE"},
+                {name: "add an employee", value: "ADD_EMPLOYEE"},
+                {name: "update an employee role", value: "UPDATE_EMPLOYEE_ROLE"},
             ],
     }
 ]).then((answers) => {
     console.log(answers);
-    const userChoice = answers.userChoices;
+    const userChoice = answers.choices;
     if (userChoice === "view all departments") {
        db.query("SELECT * FROM department", (err, results) => {
-        findallemployees()
             if (err) throw err;
               console.table(results);
-              db.end();
        });
     } else if (userChoice === "view all roles") {
         db.query("SELECT * FROM role", (err, results) => {
             if (err) throw err;
             console.table(results);
-            db.end();
         });
     } else if (userChoice === "view all employees") {
         db.query("SELECT * FROM employee", (err, results) => {
             if (err) throw err;
             console.table(results);
-            db.end();
         });
   }
     else if (userChoice === "add a department") {
@@ -74,7 +53,6 @@ function init() {
             db.query(sql, values, (err, results) => {
                 if (err) throw err;
                 console.table(results);
-                db.end();
             }
             );
         }); 
@@ -103,7 +81,6 @@ function init() {
             db.query(sql, values, (err, results) => {
                 if (err) throw err;
                 console.table(results);
-                db.end();
             }
             );
         });
@@ -139,7 +116,6 @@ function init() {
         db.query(sql, values, (err, results) => {
             if (err) throw err;
             console.table(results);
-            db.end();
         }
         );
     });
@@ -159,7 +135,7 @@ function init() {
         const employeeID = answers.employeeID;
         const roleID = answers.roleID;
         const sql = `UPDATE employee SET role_id = ? WHERE id = ?`;
-        const values = [roleID, employeeID, sql];
+        const values = [roleID, employeeID,];
 
         db.query(sql, values, (err, results) => {
             if (err) throw err;
