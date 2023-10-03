@@ -26,8 +26,10 @@ function init() {
     const userChoice = answers.choices;
     if (userChoice === "view all departments") {
        db.query("SELECT * FROM department", (err, results) => {
-            if (err) throw err;
-              console.table(results);
+            if (err) {
+                console.error("error querying the database:", err);
+            throw err; }
+            console.table(results);
        });
     } else if (userChoice === "view all roles") {
         db.query("SELECT * FROM role", (err, results) => {
